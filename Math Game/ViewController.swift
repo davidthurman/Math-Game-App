@@ -17,14 +17,20 @@ class ViewController: UIViewController {
     @IBOutlet var answer2: UIButton!
     @IBOutlet var answer3: UIButton!
     @IBOutlet var answer4: UIButton!
+    @IBOutlet var timer: UILabel!
+    @IBOutlet var retryButton: UIButton!
     
+    var counter: Int?
     var selection = false
     var answer = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        counter = 0
+        timer.text = "0.0"
+        retryButton.enabled = false
+        retryButton.hidden = true
         mainGame()
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,10 +39,20 @@ class ViewController: UIViewController {
     
     func mainGame() {
         //while true {
+        counter! += 1
+        var myTimer = NSTimer()
+        if counter == 1 {
+            myTimer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "incrementTimer", userInfo: nil, repeats: true)
+
+        }
+        else if counter == 11 {
+            myTimer.invalidate()
+            gameEnded()
+        }
+
             selection = false
             var numbers = getNums()
             num1.text = String(numbers.number1)
-            print(numbers.number1)
             num2.text = String(numbers.number2)
             let op = getOperation()
             operation.text = String(op)
@@ -164,6 +180,40 @@ class ViewController: UIViewController {
         if checkAnswer(Int((answer4.titleLabel?.text)!)!){
             mainGame()
         }
+    }
+    
+    func incrementTimer(){
+        let x = Double(timer.text!)
+        timer.text = String(x! + 0.1)
+    }
+    
+    func gameEnded(){
+        timer.hidden = true
+        answer1.hidden = true
+        answer2.hidden = true
+        answer3.hidden = true
+        answer4.hidden = true
+        num1.hidden = true
+        num2.hidden = true
+        operation.hidden = true
+        retryButton.hidden = false
+        retryButton.enabled = true
+        retryButton.setTitle("Time: \(timer.text!)\n   Retry?", forState: .Normal)
+    }
+    
+    @IBAction func retryAction(sender: AnyObject) {
+        timer.hidden = false
+        timer.text = "0.0"
+        retryButton.enabled = false
+        retryButton.hidden = true
+        answer1.hidden = false
+        answer2.hidden = false
+        answer3.hidden = false
+        answer4.hidden = false
+        num1.hidden = false
+        num2.hidden = false
+        operation.hidden = false
+        counter = 0
     }
 }
 
